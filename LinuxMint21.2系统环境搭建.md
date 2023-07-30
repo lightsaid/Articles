@@ -1,5 +1,7 @@
 # Linux Mint 21.2 系统安装和搭建 Golang & Node 开发环境
 
+创建于：2023-07-27
+
 在众多 Linux 发行版中，Linux Mint 是非常易于上手使用的，它是基于 Ubuntu 和 Debian 的开源操作系统。
 它提供了一个友好的界面、丰富的软件库和可靠的性能，使用户能够尽情享受 Linux 操作系统带来的优势。
 这一次使用刚发布不久的 Linux Mint 21.2 版本搭建一个 Golang & Node 开发环境。
@@ -456,3 +458,54 @@ sudo dpkg -i dbeaver-ce_23.1.3_amd64.deb
 ![备份](./images/linuxmint_backup02.jpg)
 
 当然使用 Timeshift 也是需要的，限于篇幅，到此为止。
+
+
+### 2023-7-28 问题补充，解决 VS Code 编码过程中闪屏问题
+
+在Linux Mint系统中，使用 VsCode 在编码过程时不时回闪屏，带有彩色的背景，很影响使用；产生这个一问题的原因是因为VsCode使用GPU加速渲染，解决办法也很简单，简单4步搞掂。
+
+1. 按 `Ctrl + Shift + P` 
+1. 搜索找到 `Preferences: Configure Runtime Arguments` 按回车
+1. 解开注释使用这个配置 `"disable-hardware-acceleration": true`
+1. 重启，问题解决
+
+### 2023-7-30 问题补充， Linux Mint 无法进入桌面
+
+今天一觉睡醒，重新打开 Linux Mint 编码时，更改的文件无法保存，一开始以为是VsCode权限问题，尝试重启了VsCode，问题依旧存在。那就干脆重启系统吧，突然有种不好的预感，我的代码还没上传到github，万一系统真的挂了，那这两天的编码不久白费了。
+
+果真如此，logo闪了一下，直接崩了，重启无法进入桌面，心中拔凉拔凉～～
+
+错误信息如下,着急解决问题，没有截图：
+
+``` bash
+busyBox v1.30.1 （Ubuntu 1:1.30.1-7ubuntus3）built-in shell （ash）
+Enter 'help' for a list of built-in commands.
+(initeramfs)
+```
+**`原因`**
+
+发生这个问题的原因可能在引导过程中，可能文件系统发生了损坏，导致无法加载根文件系统；究竟是什么原因导致文件
+损坏不可得知了。
+
+**`解决`**
+
+解决这个问题的需要使用`fsck`命令检查并修复根文件，如：`fsck /dev/sda1 -y`；
+
+解决步骤：
+
+1. 首先查找根文件路径, 在终端输入 `exit` 回车，看到 如 `... root filesytem on /dev/sda3 ...`
+那么根文件路径就是 `/dev/sda3`
+
+1. 执行 `fsck /dev/sda3 -y` 检查并修复
+
+1. 重启 `reboot`， 可能无反应
+
+1. 上面重启如果无效就输入 `exit` 按回车即可重启，Linux Mint 又可以正常工作了。
+
+[解决方案参考-1](https://forums.linuxmint.com/viewtopic.php?t=395943)
+
+[解决方案参考-2](https://ostechnix.com/how-to-fix-busybox-initramfs-error-on-ubuntu/)
+
+**`总结`**
+
+使用 Linux 遇到问题不要慌，总有解决办法的。保持良好的提交代码习惯，尽量减少损失。
